@@ -2,6 +2,8 @@ from re import search
 from bs4 import BeautifulSoup as soup
 from unirest import get
 from functools import partial
+from threading import Lock
+from json import dumps
 
 import config
 
@@ -9,7 +11,8 @@ def dummy_report(events):
    from json import dumps
    global glob
    glob = events
-   print dumps(events, sort_keys=True, indent=4, separators=(',', ': '))
+   print 'success'
+   #print dumps(events, sort_keys=True, indent=4, separators=(',', ': '))
 
 class NoMatchError(Exception):
    pass
@@ -21,29 +24,62 @@ def match(link):
          return endpoint
    raise NoMatchError(link)
 
-def dispatch(urls, report=dummy_report):
-   def callback(handler, url, response):
-      #try:
-      events, follow = handler(url, soup(response.body))
-      report(events)
-      dispatch(follow)
-      #except:
-      #   print 'Error processing url: {0}'.format(url)
+class Dispatcher:
+   def report(self, events):
+      self.harvested.update(dumps(events))
+      print 'success'
 
-   for link in urls:
+   def dispatch(self, urls):
+      # Initialize crawl state.
+      self.lock = Lock()
+      self.pending = 0
+      self.seen = set()
+      self.harvested = set()
+
+      # Start with the roots.
+      self._dispatch(urls)
+
+   def _dispatch(self, urls):
+      with self.lock:
+         for link in urls:
+            # Avoid exploring the same page twice.
+            if link in self.seen:
+               continue
+
+            try:
+               # TODO: Should be removed in final version.
+               # If it's a local file, just go ahead and read the file.
+               if link.startswith('/'):
+                  class ResponseDummy:
+                     def __init__(self, file):
+                        self.body = open(file)
+                  partial(self._callback, match(link))(link, ResponseDummy(link))
+
+               else:
+                  # Request page contents asynchronously.
+                  print 'erp'
+                  get(link, callback=partial(self._callback, match(link), link))
+                  print 'ugh'
+
+               self.seen.add(link)
+               self.pending += 1
+               print 'spinning up. pending: {0}'.format(self.pending)
+
+            except NoMatchError as e:
+               print 'Could not find handler endpoint for {0}.'.format(str(e))
+
+   def _callback(self, handler, url, response):
       try:
-         # TODO: Should be removed in final version.
-         # If it's a local file, just go ahead and read the file.
-         if link.startswith('/'):
-            class ResponseDummy:
-               def __init__(self, file):
-                  self.body = open(file)
-            partial(callback, match(link))(link, ResponseDummy(link))
-            continue
+         events, follow = handler(url, soup(response.body))
+         self.report(events)
+         self._dispatch(follow)
+      except Exception as e:
+         print 'Error processing url: {0}'.format(url)
+         print e
 
-         # Request page contents asynchronously.
-         get(link, callback=partial(callback, match(link), link))
-      except NoMatchError as e:
-         print 'Could not find handler endpoint for {0}.'.format(str(e))
+      with self.lock:
+         self.pending -= 1
+         print 'finishing. pending: {0}'.format(self.pending)
 
-dispatch(config.roots)
+d = Dispatcher()
+d.dispatch(config.roots)

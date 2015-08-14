@@ -16,21 +16,22 @@ def totalStrippedContent(html, selector):
 def nonEmpty(list):
    return filter(lambda elt : len(elt) > 0, list)
 
-def totalContents2(element):
-   return u''.join([ unicode(s) for s in element.stripped_strings ])
-
 """
-Each handler returns two lists: harvested events and follow up links.
-Harvested events are thrown in the pile. Follow up links get thrown back in the
-dispatcher.
-{
-   'venue': '_',
-   'title': '_',
-   'link': '_',
-   'description': [ '_', '_' ],
-   'dates': [ '_', '_' ],
-   'imgs': [ '_', '_' ]
-}
+Each handler is passed the url of a page to scrape and the parsed HTML on that page.
+
+Each handler returns a pair of lists:
+   1. A list of events, each formatted:
+      {
+         'venue': '_',
+         'title': '_',
+         'link': '_',
+         'description': [ '_', '_' ],
+         'dates': [ '_', '_' ],
+         'imgs': [ '_', '_' ]
+      }
+   2. A list of urls to recursively load and handle.
+
+All returned urls/links should be absolute.
 """
 
 def nwffevent(url, html):
@@ -103,6 +104,7 @@ def stgevent(url, html):
    return [ event ], []
 
 def stgcalendar(url, html):
-   # Stop recursively expanding at one year in advance today's date.
+   # TODO: Right now we don't load the next month's calendar page automatically.
+   # Stop recursively expanding at one year from today's date.
    relative = [ elt['href'] for elt in html.select('a.cal_titlelink') ]
    return [], [ urljoin(url, path) for path in relative ]
