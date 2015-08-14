@@ -1,9 +1,16 @@
 import handlers
 
 roots = [
-   '/Users/chrisalfino/Projects/events/demo/stgevt.html'
+   #'http://www.stgpresents.org/tickets/by-month/eventdetail/2197/-/the-tallest-man-on-earth'
+   #'/Users/chrisalfino/Projects/events/demo/stgevt.html'
    #'http://www.nwfilmforum.org/live/page/calendar',
+   #'/Users/chrisalfino/Projects/events/demo/lookofsilence.html',
    #'/Users/chrisalfino/Projects/events/demo/stgcal.html',
+   #'http://www.stgpresents.org/tickets/by-month/monthcalendar/2015/08/-'
+   #'http://www.stgpresents.org/tickets/by-month/eventdetail/1759/-/free-neptune-tour'
+   #'http://www.stgpresents.org/tickets/by-month/eventdetail/2256/-/pax'
+   'http://www.stgpresents.org/tickets/by-month/eventdetail/1965/-/gentlemen-of-the-road-stopover'
+
 ]
 
 router = [

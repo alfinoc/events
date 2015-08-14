@@ -4,8 +4,20 @@ from urlparse import urljoin
 from daterangeparser import parse as daterange
 from datetime import datetime, timedelta
 
-def totalContents(element):
-   return u''.join([ unicode(s).strip() for s in element.contents ])
+def join(uni):
+   return u' '.join(uni)
+
+def strippedContent(element):
+   return u''.join(element.stripped_strings)
+
+def totalStrippedContent(html, selector):
+   return join(map(strippedContent, html.select(selector)))
+
+def nonEmpty(list):
+   return filter(lambda elt : len(elt) > 0, list)
+
+def totalContents2(element):
+   return u''.join([ unicode(s) for s in element.stripped_strings ])
 
 """
 Each handler returns two lists: harvested events and follow up links.
@@ -14,9 +26,9 @@ dispatcher.
 {
    'venue': '_',
    'title': '_',
-   'description': '_',
-   'dates': [ '_', '_' ],
    'link': '_',
+   'description': [ '_', '_' ],
+   'dates': [ '_', '_' ],
    'imgs': [ '_', '_' ]
 }
 """
@@ -29,11 +41,10 @@ def nwffevent(url, html):
    }
 
    # Description.
-   descNodes = html.select('.cinemascolumnright .textdiv_leadin > *,' +
-                           '.cinemascolumnright .textdiv_prose > *')
-   descNodes = filter(lambda s : len(s) > 0, map(totalContents, descNodes))
-   descNodes = [ u'<p>{0}</p>'.format(s) for s in descNodes ]
-   event['description'] = u''.join(descNodes)
+   description = html.select('.cinemascolumnright .textdiv_leadin > *') + \
+                 html.select('.cinemascolumnright .textdiv_prose > *')
+   description = nonEmpty(map(strippedContent, description))
+   event['description'] = description
 
    # Could be a whole list of dates.
    dateWrappers = html.select('.cinemascolumnright > p')
@@ -62,21 +73,18 @@ def nwffcalendar(url, html):
 def stgevent(url, html):
    info = html.select('#aInfo')[0]
    event = {
-      'title': info.select('#aShow')[0].string,
+      'title': u' '.join(info.select('#aShow')[0].stripped_strings),
       'link': url,
       'imgs': [ urljoin(url, info.select('.aImage img')[0]['src']) ]
    }
 
-   # Description.
-   guests = info.select('#aGuest')[0].string.strip()
-   price = totalContents(info.select('.aPrice')[0])
-   notes = info.select('.aNotes')[0].string.strip()
-   text = totalContents(html.select('.aText .aContent')[0])
-   desc = (guests, price, notes, text)
-   event['description'] = u''.join([ u'<p>{0}</p>'.format(s) for s in desc ])
-
    # Expand date range, excluding day of week and <br> (first two content elements).
-   start, end = daterange(info.select('.aDate')[0].contents[2])
+   dateNodes = info.select('.aDate')
+   if len(dateNodes) == 0 or len(dateNodes[0]) < 3:
+      # Can't do much with no date.
+      return [], []
+   dateString = list(dateNodes[0].stripped_strings)[-1]
+   start, end = daterange(dateString.replace('&', '-'))
    full = [ start ]
    if end:
       delta = (end - start).days
@@ -84,6 +92,14 @@ def stgevent(url, html):
       if 1 <= delta and delta <= 365:
          full.extend([ start + timedelta(days=days) for days in xrange(1, delta + 1) ])
    event['dates'] = map(lambda d : d.isoformat(), full)
+
+   # Description.
+   guests = totalStrippedContent(info, '#aGuest')
+   price = totalStrippedContent(info, '.aPrice')
+   notes = totalStrippedContent(info, '.aNotes')
+   text = nonEmpty(map(strippedContent, html.select('.aText .aContent > *')))
+   event['description'] = nonEmpty([ guests, price, notes ] + text)
+
    return [ event ], []
 
 def stgcalendar(url, html):

@@ -23,9 +23,12 @@ def match(link):
 
 def dispatch(urls, report=dummy_report):
    def callback(handler, url, response):
+      #try:
       events, follow = handler(url, soup(response.body))
       report(events)
       dispatch(follow)
+      #except:
+      #   print 'Error processing url: {0}'.format(url)
 
    for link in urls:
       try:
