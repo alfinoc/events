@@ -14,7 +14,7 @@ roots = [
 
 ]
 
-router = [
+rules = [
    ('http://www.nwfilmforum.org/live/page/calendar', handlers.nwffcalendar),
    ('http://www.nwfilmforum.org/live/page/calendar/\d+', handlers.nwffevent),
    ('http://www.stgpresents.org/tickets/by-month/monthcalendar/.+', handlers.stgcalendar),

@@ -5,26 +5,23 @@ from functools import partial
 from threading import Lock, Thread
 from json import dumps
 
-import config
+class Router:
+   class NoMatchError(Exception):
+      pass
 
-def dummy_report(events):
-   from json import dumps
-   global glob
-   glob = events
-   print 'success'
-   #print dumps(events, sort_keys=True, indent=4, separators=(',', ': '))
+   def __init__(self, rules=[]):
+      self.rules = rules
 
-class NoMatchError(Exception):
-   pass
-
-def match(link):
-   # TODO: make config top level, like main dispatch call below.
-   for (rule, endpoint) in config.router:
-      if search('\A{0}\Z'.format(rule), link):
-         return endpoint
-   raise NoMatchError(link)
+   def match(self, link):
+      for (rule, endpoint) in self.rules:
+         if search('\A{0}\Z'.format(rule), link):
+            return endpoint
+      raise Router.NoMatchError(link)
 
 class Dispatcher:
+   def __init__(self, router):
+      self.router = router
+
    def report(self, events):
       self.harvested.update(map(dumps, events))
       print 'success'
@@ -53,19 +50,18 @@ class Dispatcher:
                   class ResponseDummy:
                      def __init__(self, file):
                         self.body = open(file)
-                  syncCB = partial(self._callback, match(link))
+                  syncCB = partial(self._callback, self.router.match(link))
                   Thread(target=syncCB, args=(link, ResponseDummy(link))).start()
                # TODO: stop removing dummy code here.
 
                else:
                   # Request page contents asynchronously.
-                  get(link, callback=partial(self._callback, match(link), link))
+                  get(link, callback=partial(self._callback, self.router.match(link), link))
 
                self.seen.add(link)
                self.pending += 1
-               print 'spinning up. pending: {0}'.format(self.pending)
 
-            except NoMatchError as e:
+            except Router.NoMatchError as e:
                print 'Could not find handler endpoint for {0}.'.format(str(e))
 
    def _callback(self, handler, url, response):
@@ -75,11 +71,11 @@ class Dispatcher:
          self._dispatch(follow)
       except Exception as e:
          print 'Error processing url: {0}'.format(url)
-         print e
 
       with self.lock:
          self.pending -= 1
-         print 'finishing. pending: {0}'.format(self.pending)
 
-d = Dispatcher()
+# Test driver.
+import config
+d = Dispatcher(Router(config.rules))
 d.dispatch(config.roots)
