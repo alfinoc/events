@@ -2,7 +2,7 @@ from re import search
 from bs4 import BeautifulSoup as soup
 from unirest import get
 from functools import partial
-from threading import Lock
+from threading import Lock, Thread
 from json import dumps
 
 import config
@@ -26,7 +26,7 @@ def match(link):
 
 class Dispatcher:
    def report(self, events):
-      self.harvested.update(dumps(events))
+      self.harvested.update(map(dumps, events))
       print 'success'
 
    def dispatch(self, urls):
@@ -53,13 +53,13 @@ class Dispatcher:
                   class ResponseDummy:
                      def __init__(self, file):
                         self.body = open(file)
-                  partial(self._callback, match(link))(link, ResponseDummy(link))
+                  syncCB = partial(self._callback, match(link))
+                  Thread(target=syncCB, args=(link, ResponseDummy(link))).start()
+               # TODO: stop removing dummy code here.
 
                else:
                   # Request page contents asynchronously.
-                  print 'erp'
                   get(link, callback=partial(self._callback, match(link), link))
-                  print 'ugh'
 
                self.seen.add(link)
                self.pending += 1
