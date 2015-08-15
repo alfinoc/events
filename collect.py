@@ -2,7 +2,7 @@ from re import search
 from bs4 import BeautifulSoup as soup
 from unirest import get
 from functools import partial
-from threading import Lock, Thread
+from threading import Lock, Thread, Condition
 from json import dumps
 
 class Router:
@@ -24,17 +24,25 @@ class Dispatcher:
 
    def report(self, events):
       self.harvested.update(map(dumps, events))
-      print 'success'
+      print 'success,', self.pending, 'pending'
 
    def dispatch(self, urls):
-      # Initialize crawl state.
+      # Initialize threading and logging state.
       self.lock = Lock()
+      self.cleanUp = Condition(self.lock)
       self.pending = 0
       self.seen = set()
       self.harvested = set()
 
       # Start with the roots.
       self._dispatch(urls)
+
+      # Wait for dispatching to complete.
+      self.cleanUp.acquire()
+      while self.pending > 0:
+         self.cleanUp.wait()
+      self.cleanUp.release()
+      return self.harvested
 
    def _dispatch(self, urls):
       with self.lock:
@@ -72,10 +80,10 @@ class Dispatcher:
       except Exception as e:
          print 'Error processing url: {0}'.format(url)
 
+      # Note: it is essentially that this decrement occurs *after* the ._dispatch
+      # call above, since self.pending cannot return to 0 until ALL requests have
+      # finished (harvesting is complete).
       with self.lock:
          self.pending -= 1
-
-# Test driver.
-import config
-d = Dispatcher(Router(config.rules))
-d.dispatch(config.roots)
+         if self.pending == 0:
+            self.cleanUp.notify_all()
