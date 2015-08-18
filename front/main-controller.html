@@ -12,12 +12,18 @@
          font-family: Museo Sans, Avenir Next, sans-serif;
       }
       </style>
-      <iron-ajax url="events.json" last-response="{{ events }}" auto></iron-ajax>
-      <template is="dom-repeat" items="{{ events }}" as="item">
+      <iron-ajax
+         url="events.json"
+         on-response="loadEvents"
+         handle-as="json"
+         auto>
+      </iron-ajax>
+      <template is="dom-repeat" items="{{ events }}" as="item" sort="cmpByDate" filter="upcoming">
          <event-card
             header="{{ item.title }}"
-            date="{{ item.dates }}"
-            line="{{ item.link }}"
+            date="{{ item.date }}"
+            venue="{{ item.venue }}"
+            link="{{ item.link }}"
             description="{{ item.description }}">
          </event-card>
       </template>
@@ -31,6 +37,43 @@
 
       ready: function() {
          this.events = [];
+      },
+
+      loadEvents: function(evt) {
+         var exploded = [];
+         evt.detail.response.forEach(function(event) {
+            event.dates.forEach(function(date) {
+               var cpy = this.shallowCopy(event);
+               cpy.date = date;
+               exploded.push(cpy)
+            }.bind(this));
+         }.bind(this));
+         this.events = exploded;
+         console.log(exploded);
+      },
+
+      cmpByDate: function(event1, event2) {
+         return new Date(event1['date']) - new Date(event2['date']);
+      },
+
+      upcoming: function(event) {
+         // Avoid direct Date() comparison since we want just to the nearest day.
+         var today = new Date();
+         today = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+         res = today - this.dayOf(event['date'])
+         console.log(event['date'], res)
+         return res <= 0;
+      },
+
+      dayOf: function(utc) {
+         return new Date(utc.split('T')[0] + 'T00:00:00-07:00')
+      },
+
+      shallowCopy: function(obj) {
+         var res = {};
+         for (var key in obj)
+            res[key] = obj[key];
+         return res;
       }
    });
    </script>

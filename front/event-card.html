@@ -19,20 +19,27 @@
 
          h1 {
             margin: 0px;
-            margin-bottom: 10px;
             font-weight: normal;
             cursor: pointer;
          }
 
          p {
             margin: 0px;
-            padding-bottom: 10px;
+            padding-top: 10px;
+         }
+         h1 > *:not(:last-child) {
+            float: right;
+            font-size: small;
          }
       </style>
       <div class="container">
-         <h1 on-click="toggleShowDetail">{{ header }}</h1>
-         <p>{{ date | parseDate }}</p>
+         <h1 on-click="toggleShowDetail">
+            <span>{{ venue }}</span>
+            <span>{{ header }}</span>
+         </h1>
+         <p>{{ date }}</p>
          <iron-collapse id="detail">
+            
             <template is="dom-repeat" items="{{ description }}">
                <p>{{ item }}</p>
             </template>
@@ -59,11 +66,10 @@
       },
 
       parseDate: function(utc) {
-         return 'lol'
          var months = ['jan', 'feb', 'mar', 'apr', 'may', 'june',
                        'july', 'aug', 'sept', 'oct', 'nov', 'dec' ];
          var parts = utc.split('T')[0].split('-');
-         return '' + months[parts[1] - 1] + parts[2];
+         return months[parts[1] - 1] + ' ' + parts[2];
       }
    });
    </script>
