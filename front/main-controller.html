@@ -1,0 +1,37 @@
+<link href="../bower_components/polymer/polymer.html" rel="import">
+<link href="../bower_components/iron-ajax/iron-ajax.html", rel="import">
+<link rel="import" href="event-card.html">
+
+<dom-module name="main-controller">
+   <template>
+      <style>
+      :host {
+         display: block;
+         max-width: 600px;
+         margin: auto;
+         font-family: Museo Sans, Avenir Next, sans-serif;
+      }
+      </style>
+      <iron-ajax url="events.json" last-response="{{ events }}" auto></iron-ajax>
+      <template is="dom-repeat" items="{{ events }}" as="item">
+         <event-card
+            header="{{ item.title }}"
+            date="{{ item.dates }}"
+            line="{{ item.link }}"
+            description="{{ item.description }}">
+         </event-card>
+      </template>
+   </template>
+   <script>
+   Polymer({
+      is: 'main-controller',
+      properties: {
+         'events': []
+      },
+
+      ready: function() {
+         this.events = [];
+      }
+   });
+   </script>
+</dom-module>

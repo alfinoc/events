@@ -1,0 +1,20 @@
+{
+  "name": "events",
+  "version": "0.0.0",
+  "homepage": "https://github.com/alfinoc/events",
+  "authors": [
+    "alfinoc <chrisalfino@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~1.1.0"
+  }
+}

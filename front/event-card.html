@@ -1,0 +1,70 @@
+<link href="../bower_components/polymer/polymer.html" rel="import">
+<link href="../bower_components/iron-list/iron-list.html" rel="import">
+<link href="../bower_components/iron-collapse/iron-collapse.html" rel="import">
+
+<dom-module name="event-card">
+   <template>
+      <style>
+         :host {
+            display: block;
+            background-color: white;
+            margin: 10px;
+            border-radius: 3px;
+            font-weight: lighter;
+         }
+
+         .container {
+            padding: 10px;
+         }
+
+         h1 {
+            margin: 0px;
+            margin-bottom: 10px;
+            font-weight: normal;
+            cursor: pointer;
+         }
+
+         p {
+            margin: 0px;
+            padding-bottom: 10px;
+         }
+      </style>
+      <div class="container">
+         <h1 on-click="toggleShowDetail">{{ header }}</h1>
+         <p>{{ date | parseDate }}</p>
+         <iron-collapse id="detail">
+            <template is="dom-repeat" items="{{ description }}">
+               <p>{{ item }}</p>
+            </template>
+         </iron-collapse>
+      </div>
+   </template>
+   <script>
+   Polymer({
+      is: 'event-card',
+      properties: {
+         'venue': '',
+         'header': '',
+         'date': '',
+         'link': '',
+         'description': []
+      },
+
+      ready: function() {
+         this.description = [];
+      },
+
+      toggleShowDetail: function() {
+         this.$.detail.toggle();
+      },
+
+      parseDate: function(utc) {
+         return 'lol'
+         var months = ['jan', 'feb', 'mar', 'apr', 'may', 'june',
+                       'july', 'aug', 'sept', 'oct', 'nov', 'dec' ];
+         var parts = utc.split('T')[0].split('-');
+         return '' + months[parts[1] - 1] + parts[2];
+      }
+   });
+   </script>
+</dom-module>
