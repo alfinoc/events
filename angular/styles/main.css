@@ -37,6 +37,15 @@ a {
   transition: color 0.1s ease-in-out;
 }
 
+.day .subtitle {
+  font-size: 12pt;
+  padding-top: 5px;
+}
+
+.day .subtitle:not(:last-child) {
+  padding-right: 0.5em;
+}
+
 .day.selected, .option-set {
   color: #F7F7F7;
 }
@@ -112,7 +121,7 @@ md-checkbox .md-icon {
   padding-top: 10px;
 }
 
-.venue.film {
+.venue.film, .day .subtitle.film {
   color: #FBB1F9;
 }
 
@@ -128,7 +137,7 @@ md-checkbox {
   background-color: #FBB1F9;
 }
 
-.venue.music {
+.venue.music, .day .subtitle.music {
   color: #CDEE69;
 }
 

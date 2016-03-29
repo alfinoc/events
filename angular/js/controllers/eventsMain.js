@@ -80,7 +80,6 @@ angular.module('events')
           m.get(key).push(eventDetail);
         });
         $scope.details = new Map();
-        console.log('whyyyy')
         m.forEach(function(v, k) {
           $scope.details.set(k, Array.from(new Set(v)));
         });
@@ -91,7 +90,6 @@ angular.module('events')
       if (!date) {
         return undefined;
       }
-      console.log($scope.details.get(dayHash(date)));
       return $scope.details.get(dayHash(date));
     }
 
@@ -103,6 +101,16 @@ angular.module('events')
         var sunday = new Date(firstSunday);
         sunday.setDate(sunday.getDate() + i * DAYS_PER_WEEK);
         var result = fullWeek(sunday);
+
+        // Hack to initially selected 'today'.
+        result.forEach(function(day) {
+          // TODO(alfino): fix
+          console.log($scope.TODAY.toDateString() == day.toDateString());
+          if ($scope.TODAY.toDateString() == day.toDateString()) {
+            $scope.selectedDate = day;
+            console.log($scope.selectedDate);
+          }
+        });
         weekCache_[i] = result;
         return result;
       },
@@ -114,5 +122,14 @@ angular.module('events')
 
     $scope.abbreviate = function(str) {
       return ABBREVIATIONS[str] || str;
+    };
+
+    $scope.numberWithType = function(events, type) {
+      if (!events) {
+        return 0;
+      }
+      return events.filter(function(evt) {
+        return evt.type == type;
+      }).length;
     };
   });

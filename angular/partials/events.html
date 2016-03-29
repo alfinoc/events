@@ -1,6 +1,9 @@
 <div layout="row" flex>
   <div class="breakout-row">
     <h1>{{selectedDate | date : 'LLLL d'}}</h1>
+    <div class="event-detail md-whiteframe-z2" ng-if="!eventsFor(selectedDate).length">
+      <h1>No events found. :(</h1>
+    </div>
     <div class="event-detail md-whiteframe-z2"
         ng-repeat="detail in eventsFor(selectedDate)"
         ng-class="{'selected': detail == selectedEvent}">
@@ -47,8 +50,14 @@
                          'focus': day.getMonth() % 2,
                          'selected': selected(day),
                           'day': true}"
-              ng-click="select(day)">
-            {{day | date : 'd'}}
+              ng-click="select(day)" layout="column">
+            <span>{{day | date : 'd'}}</span>
+            <div layout="row" layout-align="center center">
+              <span class="subtitle {{type}}" ng-repeat="(type, enabled) in enabledTypes"
+                  ng-if="enabled && numberWithType(eventsFor(day), type)">
+                {{numberWithType(eventsFor(day), type)}}
+              </span>
+            </div>
           </div>
         </div>
       </div>
