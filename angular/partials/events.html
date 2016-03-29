@@ -6,7 +6,8 @@
     </div>
     <div class="event-detail md-whiteframe-z2"
         ng-repeat="detail in eventsFor(selectedDate)"
-        ng-class="{'selected': detail == selectedEvent}">
+        ng-class="{'selected': detail == selectedEvent}"
+        ng-if="enabledTypes[detail.type]">
       <h1>
         <a href="{{detail.link}}" target="_blank">{{detail.title}}</a>
       </h1>

@@ -80,6 +80,7 @@ class Dispatcher:
          self._dispatch(follow)
       except Exception as e:
          print 'Error processing url: {0}'.format(url)
+         return
 
       # Note: it is essentially that this decrement occurs *after* the ._dispatch
       # call above, since self.pending cannot return to 0 until ALL requests have

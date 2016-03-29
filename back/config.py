@@ -3,6 +3,7 @@ import handlers
 roots = [
    'http://www.nwfilmforum.org/live/page/calendar',
    'http://www.stgpresents.org/tickets/by-month/monthcalendar/2016/03/-',
+   'http://www.stgpresents.org/tickets/by-month/monthcalendar/2016/04/-',
    #'http://www.stgpresents.org/tickets/by-month/eventdetail/2402/-/san-fermin',
    # Local debugging roots.
    #'/Users/chrisalfino/Projects/events/back/demo/stgcal.html',
