@@ -38,6 +38,7 @@ def nwffevent(url, html):
    event = {
       'title': html.select('.topheadline h4')[0].string,
       'link': url,
+      'type': 'film',
       'venue': 'Northwest Film Forum'
    }
 
@@ -75,6 +76,8 @@ def stgevent(url, html):
    info = html.select('#aInfo')[0]
    event = {
       'title': u' '.join(info.select('#aShow')[0].stripped_strings),
+      'venue': u' '.join(info.select('.aVenue')[0].stripped_strings),
+      'type': 'music',
       'link': url,
       'imgs': [ urljoin(url, info.select('.aImage img')[0]['src']) ]
    }

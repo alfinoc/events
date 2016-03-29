@@ -21,6 +21,7 @@
       <template is="dom-repeat" items="{{ events }}" as="item" sort="cmpByDate" filter="upcoming">
          <event-card
             header="{{ item.title }}"
+            dates="{{ item.dates }}"
             date="{{ item.date }}"
             venue="{{ item.venue }}"
             link="{{ item.link }}"
@@ -49,7 +50,6 @@
             }.bind(this));
          }.bind(this));
          this.events = exploded;
-         console.log(exploded);
       },
 
       cmpByDate: function(event1, event2) {
@@ -60,9 +60,7 @@
          // Avoid direct Date() comparison since we want just to the nearest day.
          var today = new Date();
          today = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-         res = today - this.dayOf(event['date'])
-         console.log(event['date'], res)
-         return res <= 0;
+         return today - this.dayOf(event['date']) <= 0;
       },
 
       dayOf: function(utc) {

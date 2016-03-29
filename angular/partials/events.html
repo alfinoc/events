@@ -1,0 +1,57 @@
+<div layout="row" flex>
+  <div class="breakout-row">
+    <h1>{{selectedDate | date : 'LLLL d'}}</h1>
+    <div class="event-detail md-whiteframe-z2"
+        ng-repeat="detail in eventsFor(selectedDate)"
+        ng-class="{'selected': detail == selectedEvent}">
+      <h1>
+        <a href="{{detail.link}}" target="_blank">{{detail.title}}</a>
+      </h1>
+      <h2>
+        <span class="venue {{detail.type}}">{{abbreviate(detail.venue)}}</span>
+        <!-- TODO(alfino): List *all* dates, not just the selected one. -->
+        <span>{{selectedDate | date : 'MMM d'}}</span>
+        <span>{{selectedDate | date : 'h:mma' | lowercase}}</span>
+      </h2>
+      <div class="description" ng-click="selectedEvent = detail">
+        <p ng-repeat="paragraph in detail.description">
+          {{paragraph}}
+        </p>
+      </div>
+    </div>
+    <div class="option-set" layout="row">
+      <md-checkbox ng-model="enabledTypes.film"
+          class="film" layout="row" layout-align="start center">
+        film
+      </md-checkbox>
+      <md-checkbox ng-model="enabledTypes.music"
+          class="music" layout="row" layout-align="start center">
+        music
+      </md-checkbox>
+    </div>
+  </div>
+  <div layout="column" flex>
+    <md-toolbar>
+    <div flex class="day-row days-of-week" layout="row" layout-align="start center">
+      <div ng-repeat="day in ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']" class="day" flex
+          ng-class="{'selected': selectedDate.getDay() == $index}">
+        <span>{{day}}</span>
+      </div>
+    </div>
+    </md-toolbar>
+    <md-virtual-repeat-container flex class="md-whiteframe-z2">
+      <div md-virtual-repeat="item in weeks" md-on-demand flex class="row-wrapper">
+        <div class="day-row" layout="row">
+          <div ng-repeat="day in item" flex
+              ng-class="{'today': TODAY.toDateString() == day.toDateString(),
+                         'focus': day.getMonth() % 2,
+                         'selected': selected(day),
+                          'day': true}"
+              ng-click="select(day)">
+            {{day | date : 'd'}}
+          </div>
+        </div>
+      </div>
+    </md-virtual-repeat-container>
+  </div>
+</div>

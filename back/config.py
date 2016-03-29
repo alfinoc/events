@@ -2,13 +2,13 @@ import handlers
 
 roots = [
    'http://www.nwfilmforum.org/live/page/calendar',
-   #'http://www.stgpresents.org/tickets/by-month/monthcalendar/2015/08/-'
-
+   'http://www.stgpresents.org/tickets/by-month/monthcalendar/2016/03/-',
+   #'http://www.stgpresents.org/tickets/by-month/eventdetail/2402/-/san-fermin',
    # Local debugging roots.
-   #'/Users/chrisalfino/Projects/events/demo/stgcal.html',
-   #'/Users/chrisalfino/Projects/events/demo/stgevt.html'
-   #'/Users/chrisalfino/Projects/events/demo/nwff.html'
-   #'/Users/chrisalfino/Projects/events/demo/lookofsilence.html',
+   #'/Users/chrisalfino/Projects/events/back/demo/stgcal.html',
+   #'/Users/chrisalfino/Projects/events/back/demo/stgevt.html'
+   #'/Users/chrisalfino/Projects/events/back/demo/nwff.html'
+   #'/Users/chrisalfino/Projects/events/back/demo/lookofsilence.html',
 ]
 
 rules = [
@@ -18,8 +18,8 @@ rules = [
    ('http://www.stgpresents.org/tickets/by-month/eventdetail/.+', handlers.stgevent),
 
    # Local debugging pages.
-   #('/Users/chrisalfino/Projects/events/demo/stgevt.html', handlers.stgevent),
-   #('/Users/chrisalfino/Projects/events/demo/stgcal.html', handlers.stgcalendar),
-   #('/Users/chrisalfino/Projects/events/demo/nwff.html', handlers.nwffcalendar),
-   #('/Users/chrisalfino/Projects/events/demo/lookofsilence.html', handlers.nwffevent),
+   #('/Users/chrisalfino/Projects/events/back/demo/stgevt.html', handlers.stgevent),
+   #('/Users/chrisalfino/Projects/events/back/demo/stgcal.html', handlers.stgcalendar),
+   ('/Users/chrisalfino/Projects/events/back/demo/nwff.html', handlers.nwffcalendar),
+   #('/Users/chrisalfino/Projects/events/back/demo/lookofsilence.html', handlers.nwffevent),
 ]

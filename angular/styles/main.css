@@ -1,0 +1,142 @@
+body, md-toolbar, .event-detail {
+  background-color: #242420 !important;
+  color: #B0B0B0;
+  font-family: monospace;
+  font-size: 10pt;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+*[ng-click] {
+  outline: none;
+  cursor: pointer;
+}
+
+.option-set {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.day-list {
+  box-sizing: border-box;
+  padding-top: 15px;
+}
+
+.row-wrapper {
+  height: 100px;
+}
+
+.day {
+  text-align: center;
+  font-size: 32pt;
+  transition: color 0.1s ease-in-out;
+}
+
+.day.selected, .option-set {
+  color: #F7F7F7;
+}
+
+md-checkbox .md-icon {
+  border-color: #F7F7F7;
+}
+
+.day:not(.focus):not(.selected):not(.today) {
+  color: #5D5D5D;
+}
+
+.day.today {
+  color: #9CD9F0;
+}
+
+.breakout-row {
+  transition: width 0.2s ease-in-out;
+  background-color: #5D5D5D;
+  color: #242420;
+  overflow: auto;
+  width: 450px;
+}
+
+.breakout-row md-checkbox.md-checked .md-icon:after {
+  border-color: #242420;
+}
+
+.breakout-row > h1 {
+  padding-left: 15px;
+  padding-right: 15px;
+  text-align: right;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.event-detail {
+  overflow: hidden;
+  box-sizing: border-box;
+  margin: 15px;
+  padding: 15px;
+  border-radius: 2px;
+}
+
+.event-detail.selected .description {
+  overflow: auto;
+  max-height: initial;
+}
+
+.event-detail .description {
+  max-height: 250px;
+  overflow: hidden;
+}
+
+.event-detail h1,
+.breakout-row h1 {
+  color: #F7F7F7;
+}
+
+.event-detail h1, .event-detail h2 {
+  margin: 0px;
+}
+
+.event-detail h2 {
+  font-size: 12pt;
+}
+
+.event-detail p:first-child {
+  margin-top: 0px;
+}
+
+.event-detail > *:not(:first-child) {
+  padding-top: 10px;
+}
+
+.venue.film {
+  color: #FBB1F9;
+}
+
+md-checkbox {
+  border-color: 
+}
+
+.option-set md-checkbox .md-ripple-container {
+  display: none;
+}
+
+.option-set md-checkbox.md-checked.film .md-icon {
+  background-color: #FBB1F9;
+}
+
+.venue.music {
+  color: #CDEE69;
+}
+
+.option-set md-checkbox.md-checked.music .md-icon {
+  background-color: #CDEE69;
+}
+
+.day-row.days-of-week .day {
+  font-size: 14pt;
+  height: initial;
+}

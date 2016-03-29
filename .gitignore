@@ -1,3 +1,7 @@
 demo
 *.pyc
 *.txt
+angular/dist
+angular/node_modules
+angular/bower_components
+

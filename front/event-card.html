@@ -1,5 +1,6 @@
 <link href="../bower_components/polymer/polymer.html" rel="import">
 <link href="../bower_components/iron-list/iron-list.html" rel="import">
+<link href="../bower_components/paper-card/paper-card.html" rel="import">
 <link href="../bower_components/iron-collapse/iron-collapse.html" rel="import">
 
 <dom-module name="event-card">
@@ -13,11 +14,7 @@
             font-weight: lighter;
          }
 
-         .container {
-            padding: 10px;
-         }
-
-         h1 {
+         h1, h2 {
             margin: 0px;
             font-weight: normal;
             cursor: pointer;
@@ -27,22 +24,60 @@
             margin: 0px;
             padding-top: 10px;
          }
+
+         h1 {
+            font-size: 16pt;
+         }
+
+         h2 {
+            font-size: 12pt;
+            font-weight: lighter;
+         }
+
          h1 > *:not(:last-child) {
             float: right;
-            font-size: small;
+            font-size: 12pt;
          }
+
+         .banner, .detailcontainer {
+            padding: 10px;
+         }
+
+         .detailcontainer {
+            padding-top: 0px;
+         }
+
+         .banner > *:not(:first-child), .detailcontainer > *:not(:first-child) {
+            padding-top: 10px;
+         }
+
+         paper-card {
+            width: 100%;
+         }
+
+         #container.mini h1,
+         #container.mini h2 {
+            font-size: 12pt;
+         }
+         #container.mini h2 {
+            display: none;
+         }
+
       </style>
-      <div class="container">
-         <h1 on-click="toggleShowDetail">
-            <span>{{ venue }}</span>
-            <span>{{ header }}</span>
-         </h1>
-         <p>{{ date }}</p>
+      <div id="container">
+         <paper-card>
+            <div class="banner" on-click="toggleShowDetail">
+               <h1>{{ header }}</h1>
+               <h2>{{ venue }}</h2>
+            </div>
+         </paper-card>
          <iron-collapse id="detail">
-            
-            <template is="dom-repeat" items="{{ description }}">
-               <p>{{ item }}</p>
-            </template>
+            <div class="detailcontainer">
+               <p>{{ date }}</p>
+               <template is="dom-repeat" items="{{ description }}">
+                  <p>{{ item }}</p>
+               </template>
+            </div>
          </iron-collapse>
       </div>
    </template>
@@ -52,13 +87,20 @@
       properties: {
          'venue': '',
          'header': '',
-         'date': '',
+         'date': {
+            observer: '_dateChanged'
+         },
+         //'dates': [],
+         'dates': {
+            observer: '_dateChanged'
+         },
          'link': '',
          'description': []
       },
 
       ready: function() {
          this.description = [];
+         this.dates = [];
       },
 
       toggleShowDetail: function() {
@@ -70,6 +112,19 @@
                        'july', 'aug', 'sept', 'oct', 'nov', 'dec' ];
          var parts = utc.split('T')[0].split('-');
          return months[parts[1] - 1] + ' ' + parts[2];
+      },
+
+      _dateChanged: function() {
+         if (this.dates && this.date) {
+            if (!this.isBookend())
+               this.$.container.classList.add('mini');
+         }
+      },
+
+      // Returns true if this is the first or last offering of the event.
+      isBookend: function() {
+         var index = this.dates.indexOf(this.date);
+         return index == this.dates.length - 1 || index == 0;
       }
    });
    </script>

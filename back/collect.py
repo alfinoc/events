@@ -5,7 +5,7 @@ from functools import partial
 from threading import Lock, Thread, Condition
 from json import dumps, loads
 
-setTimeout(10)
+setTimeout(60)
 
 class Router:
    class NoMatchError(Exception):
